@@ -2,15 +2,8 @@ import { GoogleGenAI } from "@google/genai";
 import type { CensusRecord } from '../types';
 import { calculateAge, GROUP_DEFINITIONS } from '../utils/helpers';
 
-// Use Vite's environment variables for the API key
-const GEMINI_API_KEY = import.meta.env.VITE_API_KEY;
-
-if (!GEMINI_API_KEY) {
-  // This will throw an error during the build process if the key is not set
-  throw new Error("VITE_API_KEY is not defined in the environment variables.");
-}
-
-const ai = new GoogleGenAI({ apiKey: GEMINI_API_KEY });
+// Fix: Per @google/genai guidelines, the API key must be obtained exclusively from process.env.API_KEY.
+const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
 export const generateMemberSummary = async (record: CensusRecord): Promise<string> => {
   const age = calculateAge(record.fecha_nacimiento);

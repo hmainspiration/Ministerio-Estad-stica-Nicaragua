@@ -394,7 +394,7 @@ const Dashboard: React.FC<{ user: User }> = ({ user }) => {
         </div>
       </header>
       
-      <main className="p-4 md:p-6">
+      <main className="p-4 md:p-6 pb-24">
         <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md mb-6 space-y-4">
             <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">

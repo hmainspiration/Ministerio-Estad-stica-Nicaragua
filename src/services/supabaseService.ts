@@ -1,3 +1,6 @@
+// Fix: Add a triple-slash directive to include Vite client types for `import.meta.env`.
+/// <reference types="vite/client" />
+
 import { createClient, SupabaseClient, User as SupabaseUser } from '@supabase/supabase-js';
 import type { User, CensusRecord, NewCensusRecord } from '../types';
 
