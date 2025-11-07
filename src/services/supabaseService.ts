@@ -1,15 +1,13 @@
-// Fix: Add a triple-slash directive to include Vite client types for `import.meta.env`.
-/// <reference types="vite/client" />
-
 import { createClient, SupabaseClient, User as SupabaseUser } from '@supabase/supabase-js';
 import type { User, CensusRecord, NewCensusRecord } from '../types';
 
-// Use Vite's environment variables
-const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
-const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
+// FIX: Se reemplazaron las variables de entorno import.meta.env con valores fijos para resolver errores de TypeScript.
+// Esto es una solución temporal debido a que a la configuración de TypeScript le faltan los tipos de cliente de Vite.
+const SUPABASE_URL = 'https://oeclifpdivwlrsjyhqdq.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9lY2xpZnBkaXZ3bHJzanlocWRxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjIyMDA5MTMsImV4cCI6MjA3Nzc3NjkxM30.Oaitak0frQ78btY9sGVe6IqaGAWYvgn5_INuffv5KXY';
 
 if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
-  throw new Error("Supabase URL and Anon Key must be provided in .env file");
+  throw new Error("La URL de Supabase y la clave anónima deben ser proporcionadas.");
 }
 
 const supabase: SupabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);

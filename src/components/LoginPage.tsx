@@ -115,7 +115,7 @@ const LoginPage: React.FC = () => {
           </button>
         </div>
         <div className="text-center">
-           <p className="text-xs text-gray-500 dark:text-gray-400">Versión 1.0</p>
+           <p className="text-xs text-gray-500 dark:text-gray-400">Versión 1.1</p>
         </div>
       </div>
     </div>

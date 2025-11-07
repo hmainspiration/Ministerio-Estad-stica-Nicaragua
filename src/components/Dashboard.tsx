@@ -394,7 +394,7 @@ const Dashboard: React.FC<{ user: User }> = ({ user }) => {
         </div>
       </header>
       
-      <main className="p-4 md:p-6 pb-24">
+      <main className="p-4 md:p-6">
         <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md mb-6 space-y-4">
             <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -457,20 +457,24 @@ const Dashboard: React.FC<{ user: User }> = ({ user }) => {
                 </div>
             </div>
             
-            <div className="flex flex-col sm:flex-row items-center gap-3 pt-4 border-t border-gray-200 dark:border-gray-700">
-                <button onClick={() => setIsCensusModalOpen(true)} className="flex-1 w-full flex items-center justify-center gap-2 bg-blue-600 text-white font-semibold py-2 px-4 rounded-md hover:bg-blue-700 transition-colors">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 pt-4 border-t border-gray-200 dark:border-gray-700">
+                <button onClick={() => { setEditingRecord(null); setIsFormOpen(true); }} className="flex items-center justify-center gap-2 bg-blue-600 text-white font-semibold py-2 px-4 rounded-md hover:bg-blue-700 transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clipRule="evenodd" /></svg>
+                    <span>Agregar</span>
+                </button>
+                <button onClick={() => setIsCensusModalOpen(true)} className="flex items-center justify-center gap-2 bg-purple-600 text-white font-semibold py-2 px-4 rounded-md hover:bg-purple-700 transition-colors">
                     <span>Censo</span>
                 </button>
-                <label htmlFor="import-excel" className="flex-1 w-full flex items-center justify-center gap-2 bg-green-500 text-white font-semibold py-2 px-4 rounded-md hover:bg-green-600 transition-colors cursor-pointer">
+                <label htmlFor="import-excel" className="flex items-center justify-center gap-2 bg-green-500 text-white font-semibold py-2 px-4 rounded-md hover:bg-green-600 transition-colors cursor-pointer">
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM6.293 6.707a1 1 0 010-1.414l3-3a1 1 0 011.414 0l3 3a1 1 0 01-1.414 1.414L11 5.414V13a1 1 0 11-2 0V5.414L7.707 6.707a1 1 0 01-1.414 0z" clipRule="evenodd" /></svg>
                     <span>Cargar</span>
                 </label>
                 <input id="import-excel" type="file" accept=".xlsx, .xls" className="hidden" onChange={handleImportClick} />
-                <button onClick={() => exportToMultiSheetExcel(records, churchName)} className="flex-1 w-full flex items-center justify-center gap-2 bg-green-500 text-white font-semibold py-2 px-4 rounded-md hover:bg-green-600 transition-colors">
+                <button onClick={() => exportToMultiSheetExcel(records, churchName)} className="flex items-center justify-center gap-2 bg-green-500 text-white font-semibold py-2 px-4 rounded-md hover:bg-green-600 transition-colors">
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clipRule="evenodd" /></svg>
                     <span>Excel</span>
                 </button>
-                <button onClick={() => generateAdvancedPdf(records, churchName)} className="flex-1 w-full flex items-center justify-center gap-2 bg-red-500 text-white font-semibold py-2 px-4 rounded-md hover:bg-red-600 transition-colors">
+                <button onClick={() => generateAdvancedPdf(records, churchName)} className="flex items-center justify-center gap-2 bg-red-500 text-white font-semibold py-2 px-4 rounded-md hover:bg-red-600 transition-colors col-span-2 md:col-span-1 lg:col-span-1">
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clipRule="evenodd" /></svg>
                     <span>PDF</span>
                 </button>
@@ -521,21 +525,22 @@ const Dashboard: React.FC<{ user: User }> = ({ user }) => {
                         </div>
                     </div>
                 ))}
-                {filteredRecords.length === 0 && <p className="text-center p-8 text-gray-500">No se encontraron registros.</p>}
+                {filteredRecords.length === 0 && (
+                  <div className="text-center p-12 text-gray-500 dark:text-gray-400">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+                    </svg>
+                    <h3 className="mt-4 text-lg font-semibold text-gray-800 dark:text-white">No se encontraron resultados</h3>
+                    {searchTerm ? (
+                      <p className="mt-1 text-sm">No pudimos encontrar ningún miembro que coincida con "<span className="font-semibold text-gray-600 dark:text-gray-200">{searchTerm}</span>".</p>
+                    ) : (
+                      <p className="mt-1 text-sm">No hay miembros que coincidan con los filtros actuales.</p>
+                    )}
+                  </div>
+                )}
             </div>
         </div>
       </main>
-
-      <button 
-        onClick={() => { setEditingRecord(null); setIsFormOpen(true); }} 
-        className="fixed bottom-6 right-6 bg-blue-600 text-white rounded-full p-4 shadow-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 z-20"
-        aria-label="Agregar Miembro"
-        title="Agregar Miembro"
-      >
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-        </svg>
-      </button>
 
       <MemberFormModal 
         isOpen={isFormOpen} 
