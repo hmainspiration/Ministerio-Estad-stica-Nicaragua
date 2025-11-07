@@ -2,8 +2,7 @@ import { GoogleGenAI } from "@google/genai";
 import type { CensusRecord } from '../types';
 import { calculateAge, GROUP_DEFINITIONS } from '../utils/helpers';
 
-// Fix: Per @google/genai guidelines, the API key must be obtained exclusively from process.env.API_KEY
-// and the client should be initialized directly with it. Fallbacks, warnings, and manual checks are not recommended.
+// Fix: Per @google/genai guidelines, the API key must be obtained exclusively from process.env.API_KEY.
 const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
 export const generateMemberSummary = async (record: CensusRecord): Promise<string> => {

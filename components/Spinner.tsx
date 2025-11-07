@@ -1,4 +1,3 @@
-
 import React from 'react';
 
 const Spinner: React.FC<{ size?: string }> = ({ size = 'h-8 w-8' }) => (

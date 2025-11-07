@@ -24,8 +24,8 @@ const StatusIndicator: React.FC<{ status: SyncStatus }> = ({ status }) => {
     const { text, color } = statusInfo[status];
     return (
         <div className="flex items-center space-x-2">
-            <div className={`h-3 w-3 rounded-full ${color}`}></div>
-            <span className="text-sm font-medium text-gray-600 dark:text-gray-300">{text}</span>
+            <div className={`h-2.5 w-2.5 rounded-full ${color}`}></div>
+            <span className="text-xs font-medium text-gray-500 dark:text-gray-400">{text}</span>
         </div>
     );
 };
@@ -66,6 +66,13 @@ const Dashboard: React.FC<{ user: User }> = ({ user }) => {
   const [excelData, setExcelData] = useState<any[]>([]);
 
   const [selectedRecordForSummary, setSelectedRecordForSummary] = useState<CensusRecord | null>(null);
+  
+  // Predictive Search State
+  const [suggestions, setSuggestions] = useState<CensusRecord[]>([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  
+  const [areFiltersVisible, setAreFiltersVisible] = useState(false);
+
 
   const churchName = user.church_name;
 
@@ -307,6 +314,28 @@ const Dashboard: React.FC<{ user: User }> = ({ user }) => {
   const handleOpenMemberSummary = (record: CensusRecord) => {
     setSelectedRecordForSummary(record);
   };
+  
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setSearchTerm(value);
+    if (value) {
+      const newSuggestions = records.filter(r => 
+        r.nombre_completo.toLowerCase().includes(value.toLowerCase())
+      );
+      setSuggestions(newSuggestions);
+      setShowSuggestions(true);
+    } else {
+      setSuggestions([]);
+      setShowSuggestions(false);
+    }
+  };
+
+  const handleSuggestionClick = (name: string) => {
+    setSearchTerm(name);
+    setSuggestions([]);
+    setShowSuggestions(false);
+  };
+
 
   const censusData = useMemo<CensusData>(() => {
     const adultGroups: { [key: string]: { H: number; M: number } } = {
@@ -381,87 +410,38 @@ const Dashboard: React.FC<{ user: User }> = ({ user }) => {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      <header className="bg-white dark:bg-gray-800 shadow-md p-4 flex justify-between items-center sticky top-0 z-10">
-        <h1 className="text-xl md:text-2xl font-bold text-gray-800 dark:text-white">{churchName}</h1>
-        <div className="flex items-center space-x-4">
-          <StatusIndicator status={syncStatus} />
-          <button onClick={() => authService.signOut()} className="flex items-center gap-2 text-sm font-medium text-red-600 dark:text-red-400 hover:underline">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-              <path fillRule="evenodd" d="M3 3a1 1 0 00-1 1v12a1 1 0 102 0V4a1 1 0 00-1-1zm10.293 9.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 10-1.414 1.414L14.586 9H7a1 1 0 100 2h7.586l-1.293 1.293z" clipRule="evenodd" />
-            </svg>
-            <span>Cerrar Sesión</span>
+      <header className="bg-white dark:bg-gray-800 shadow-md p-4 flex justify-between items-center sticky top-0 z-20">
+        <div className="flex items-center space-x-3">
+            <h1 className="text-xl md:text-2xl font-bold text-gray-800 dark:text-white">{churchName}</h1>
+            <StatusIndicator status={syncStatus} />
+        </div>
+        <div className="flex items-center space-x-2">
+          <button 
+              onClick={() => { setEditingRecord(null); setIsFormOpen(true); }}
+              className="h-10 w-10 flex items-center justify-center bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-all shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-gray-800"
+              aria-label="Agregar miembro"
+              title="Agregar Miembro"
+          >
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" /></svg>
+          </button>
+          
+          <button 
+              onClick={() => authService.signOut()} 
+              className="h-10 w-10 flex items-center justify-center bg-red-600 text-white rounded-full hover:bg-red-700 transition-all shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 focus:ring-offset-gray-800"
+              aria-label="Cerrar sesión"
+              title="Cerrar Sesión"
+          >
+             <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+             </svg>
           </button>
         </div>
       </header>
       
       <main className="p-4 md:p-6">
         <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md mb-6 space-y-4">
-            <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <svg className="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                        <path fillRule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clipRule="evenodd" />
-                    </svg>
-                </div>
-                <input
-                    type="text"
-                    placeholder="Buscar por nombre..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="w-full pl-10 pr-3 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="relative">
-                    <select
-                        value={filterStatus}
-                        onChange={(e) => setFilterStatus(e.target.value as StatusFilter)}
-                        className="w-full appearance-none pl-3 pr-10 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    >
-                        <option value="all">Todos los Registros</option>
-                        <option value="general">Censo General (Activos/RT)</option>
-                        <option value="archivado">Archivados</option>
-                        <option value="trasladado">Trasladados</option>
-                    </select>
-                    <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                        <svg className="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" /></svg>
-                    </div>
-                </div>
-                <div className="relative">
-                    <select
-                        value={filterGroup}
-                        onChange={(e) => setFilterGroup(e.target.value)}
-                        className="w-full appearance-none pl-3 pr-10 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    >
-                        <option value="All">Todos los Grupos</option>
-                        {Object.entries(GROUP_DEFINITIONS).map(([key, label]) => (
-                            <option key={key} value={key}>{label}</option>
-                        ))}
-                    </select>
-                    <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                        <svg className="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" /></svg>
-                    </div>
-                </div>
-                 <div className="relative">
-                    <select
-                        value={filterGender}
-                        onChange={(e) => setFilterGender(e.target.value as GenderFilter)}
-                        className="w-full appearance-none pl-3 pr-10 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    >
-                        <option value="All">Todos los Géneros</option>
-                        <option value="Masculino">Masculino</option>
-                        <option value="Femenino">Femenino</option>
-                    </select>
-                    <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                        <svg className="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" /></svg>
-                    </div>
-                </div>
-            </div>
-            
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 pt-4 border-t border-gray-200 dark:border-gray-700">
-                <button onClick={() => { setEditingRecord(null); setIsFormOpen(true); }} className="flex items-center justify-center gap-2 bg-blue-600 text-white font-semibold py-2 px-4 rounded-md hover:bg-blue-700 transition-colors">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clipRule="evenodd" /></svg>
-                    <span>Agregar</span>
-                </button>
+            {/* Action Buttons */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                 <button onClick={() => setIsCensusModalOpen(true)} className="flex items-center justify-center gap-2 bg-purple-600 text-white font-semibold py-2 px-4 rounded-md hover:bg-purple-700 transition-colors">
                     <span>Censo</span>
                 </button>
@@ -474,10 +454,111 @@ const Dashboard: React.FC<{ user: User }> = ({ user }) => {
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clipRule="evenodd" /></svg>
                     <span>Excel</span>
                 </button>
-                <button onClick={() => generateAdvancedPdf(records, churchName)} className="flex items-center justify-center gap-2 bg-red-500 text-white font-semibold py-2 px-4 rounded-md hover:bg-red-600 transition-colors col-span-2 md:col-span-1 lg:col-span-1">
+                <button onClick={() => generateAdvancedPdf(records, churchName)} className="flex items-center justify-center gap-2 bg-red-500 text-white font-semibold py-2 px-4 rounded-md hover:bg-red-600 transition-colors">
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clipRule="evenodd" /></svg>
                     <span>PDF</span>
                 </button>
+            </div>
+
+             {/* Collapsible Filters */}
+            <div>
+              <button
+                onClick={() => setAreFiltersVisible(!areFiltersVisible)}
+                className="w-full flex justify-between items-center text-left p-3 bg-gray-50 dark:bg-gray-700/50 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                aria-expanded={areFiltersVisible}
+                aria-controls="filter-section"
+              >
+                <div className="flex items-center space-x-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-500 dark:text-gray-400" viewBox="0 0 20 20" fill="currentColor">
+                      <path d="M5 4a1 1 0 00-2 0v7.268a2 2 0 000 3.464V16a1 1 0 102 0v-1.268a2 2 0 000-3.464V4zM11 4a1 1 0 10-2 0v1.268a2 2 0 000 3.464V16a1 1 0 102 0V8.732a2 2 0 000-3.464V4zM16 3a1 1 0 011 1v7.268a2 2 0 010 3.464V16a1 1 0 11-2 0v-1.268a2 2 0 010-3.464V4a1 1 0 011-1z" />
+                    </svg>
+                    <span className="font-semibold text-gray-700 dark:text-gray-200">Filtros</span>
+                </div>
+                <svg className={`h-5 w-5 text-gray-500 dark:text-gray-400 transition-transform transform ${areFiltersVisible ? 'rotate-180' : ''}`} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                    <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
+                </svg>
+              </button>
+              
+              <div id="filter-section" className={`transition-all duration-300 ease-in-out overflow-hidden ${areFiltersVisible ? 'max-h-96 mt-4' : 'max-h-0'}`}>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2 pb-2">
+                    <div className="relative">
+                        <select
+                            value={filterStatus}
+                            onChange={(e) => setFilterStatus(e.target.value as StatusFilter)}
+                            className="w-full appearance-none pl-3 pr-10 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        >
+                            <option value="all">Todos los Registros</option>
+                            <option value="general">Censo General (Activos/RT)</option>
+                            <option value="archivado">Archivados</option>
+                            <option value="trasladado">Trasladados</option>
+                        </select>
+                        <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                            <svg className="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" /></svg>
+                        </div>
+                    </div>
+                    <div className="relative">
+                        <select
+                            value={filterGroup}
+                            onChange={(e) => setFilterGroup(e.target.value)}
+                            className="w-full appearance-none pl-3 pr-10 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        >
+                            <option value="All">Todos los Grupos</option>
+                            {Object.entries(GROUP_DEFINITIONS).map(([key, label]) => (
+                                <option key={key} value={key}>{label}</option>
+                            ))}
+                        </select>
+                        <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                            <svg className="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" /></svg>
+                        </div>
+                    </div>
+                     <div className="relative">
+                        <select
+                            value={filterGender}
+                            onChange={(e) => setFilterGender(e.target.value as GenderFilter)}
+                            className="w-full appearance-none pl-3 pr-10 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        >
+                            <option value="All">Todos los Géneros</option>
+                            <option value="Masculino">Masculino</option>
+                            <option value="Femenino">Femenino</option>
+                        </select>
+                        <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                            <svg className="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" /></svg>
+                        </div>
+                    </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Search Bar */}
+            <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <svg className="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                        <path fillRule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clipRule="evenodd" />
+                    </svg>
+                </div>
+                <input
+                    type="text"
+                    placeholder="Buscar por nombre..."
+                    value={searchTerm}
+                    onChange={handleSearchChange}
+                    onFocus={() => setShowSuggestions(true)}
+                    onBlur={() => setTimeout(() => setShowSuggestions(false), 150)}
+                    className="w-full pl-10 pr-3 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    autoComplete="off"
+                />
+                {showSuggestions && suggestions.length > 0 && searchTerm && (
+                    <ul className="absolute z-10 w-full mt-1 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-lg max-h-60 overflow-y-auto">
+                        {suggestions.map(suggestion => (
+                            <li 
+                                key={suggestion.id}
+                                className="px-4 py-2 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-600 text-gray-900 dark:text-gray-200"
+                                onMouseDown={() => handleSuggestionClick(suggestion.nombre_completo)}
+                            >
+                                {suggestion.nombre_completo}
+                            </li>
+                        ))}
+                    </ul>
+                )}
             </div>
         </div>
 

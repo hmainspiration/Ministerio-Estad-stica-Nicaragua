@@ -9,10 +9,14 @@ export const calculateTotals = (records: CensusRecord[]): { act: number; rt: num
   records.forEach(record => {
     switch (record.estado) {
       case 'Activo':
-        act++;
+        if (record.grupo !== 'N') {
+          act++;
+        }
         break;
       case 'Retirado Temporal':
-        rt++;
+        if (record.grupo !== 'N') {
+          rt++;
+        }
         break;
       case 'Archivado':
         ma++;

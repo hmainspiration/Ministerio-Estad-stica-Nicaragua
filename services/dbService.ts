@@ -1,4 +1,3 @@
-
 import type { CensusRecord, SyncOperation } from '../types';
 
 const DB_NAME = 'CensoDB';

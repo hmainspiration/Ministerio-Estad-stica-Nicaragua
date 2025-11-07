@@ -29,8 +29,9 @@ export const generateAdvancedPdf = (records: CensusRecord[], churchName: string)
     doc.setFont('helvetica', 'bold');
     doc.text('CODIGO: NIGR06', 14, 45);
 
-    // M.A: Archivados, M.E: Trasladados (as per user image context)
-    const totalsText = `ACT: ${totals.act} RT: ${totals.rt} M.A: ${totals.ma} M.E: ${totals.me}`;
+    // M.A: Archivados, M.E: Cantidad de Niños
+    const ninosCount = records.filter(r => r.grupo === 'N' && (r.estado === 'Activo' || r.estado === 'Retirado Temporal')).length;
+    const totalsText = `ACT: ${totals.act} RT: ${totals.rt} M.A: ${totals.ma} M.E: ${ninosCount}`;
     doc.text(totalsText, doc.internal.pageSize.getWidth() - 14, 45, { align: 'right' });
 
     let yPosition = 55;
@@ -78,7 +79,7 @@ export const generateAdvancedPdf = (records: CensusRecord[], churchName: string)
             body: tableRows,
             startY: yPosition,
             theme: 'grid',
-            headStyles: { fillColor: [220, 220, 220], textColor: [0, 0, 0], fontStyle: 'bold', fontSize: 8 },
+            headStyles: { fillColor: [191, 219, 254], textColor: [0, 0, 0], fontStyle: 'bold', fontSize: 8 },
             styles: { fontSize: 8 },
             columnStyles: { 0: { cellWidth: 8 }, 1: { cellWidth: 'auto' } }
         });
@@ -89,11 +90,13 @@ export const generateAdvancedPdf = (records: CensusRecord[], churchName: string)
     const mujeres = activeAndRT.filter(r => r.genero === 'Femenino' && r.grupo !== 'N').sort((a,b) => a.nombre_completo.localeCompare(b.nombre_completo));
     const ninos = activeAndRT.filter(r => r.grupo === 'N').sort((a,b) => a.nombre_completo.localeCompare(b.nombre_completo));
     const archivados = records.filter(r => r.estado === 'Archivado').sort((a,b) => a.nombre_completo.localeCompare(b.nombre_completo));
+    const trasladados = records.filter(r => r.estado === 'Trasladado').sort((a,b) => a.nombre_completo.localeCompare(b.nombre_completo));
 
     addSection('HOMBRES', hombres, true);
     addSection('MUJERES', mujeres);
     addSection('NIÑOS', ninos);
     addSection('ARCHIVOS', archivados);
+    addSection('TRASLADOS', trasladados);
 
     doc.save(`Lista_Membresia_${churchName.replace(/\s/g, '_')}.pdf`);
 };
