@@ -70,6 +70,8 @@ const Dashboard: React.FC<{ user: User }> = ({ user }) => {
   // Predictive Search State
   const [suggestions, setSuggestions] = useState<CensusRecord[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
+  
+  const [areFiltersVisible, setAreFiltersVisible] = useState(false);
 
 
   const churchName = user.church_name;
@@ -438,84 +440,8 @@ const Dashboard: React.FC<{ user: User }> = ({ user }) => {
       
       <main className="p-4 md:p-6">
         <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md mb-6 space-y-4">
-            <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <svg className="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                        <path fillRule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clipRule="evenodd" />
-                    </svg>
-                </div>
-                <input
-                    type="text"
-                    placeholder="Buscar por nombre..."
-                    value={searchTerm}
-                    onChange={handleSearchChange}
-                    onFocus={() => setShowSuggestions(true)}
-                    onBlur={() => setTimeout(() => setShowSuggestions(false), 150)}
-                    className="w-full pl-10 pr-3 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    autoComplete="off"
-                />
-                {showSuggestions && suggestions.length > 0 && searchTerm && (
-                    <ul className="absolute z-10 w-full mt-1 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-lg max-h-60 overflow-y-auto">
-                        {suggestions.map(suggestion => (
-                            <li 
-                                key={suggestion.id}
-                                className="px-4 py-2 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-600 text-gray-900 dark:text-gray-200"
-                                onMouseDown={() => handleSuggestionClick(suggestion.nombre_completo)}
-                            >
-                                {suggestion.nombre_completo}
-                            </li>
-                        ))}
-                    </ul>
-                )}
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="relative">
-                    <select
-                        value={filterStatus}
-                        onChange={(e) => setFilterStatus(e.target.value as StatusFilter)}
-                        className="w-full appearance-none pl-3 pr-10 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    >
-                        <option value="all">Todos los Registros</option>
-                        <option value="general">Censo General (Activos/RT)</option>
-                        <option value="archivado">Archivados</option>
-                        <option value="trasladado">Trasladados</option>
-                    </select>
-                    <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                        <svg className="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" /></svg>
-                    </div>
-                </div>
-                <div className="relative">
-                    <select
-                        value={filterGroup}
-                        onChange={(e) => setFilterGroup(e.target.value)}
-                        className="w-full appearance-none pl-3 pr-10 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    >
-                        <option value="All">Todos los Grupos</option>
-                        {Object.entries(GROUP_DEFINITIONS).map(([key, label]) => (
-                            <option key={key} value={key}>{label}</option>
-                        ))}
-                    </select>
-                    <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                        <svg className="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" /></svg>
-                    </div>
-                </div>
-                 <div className="relative">
-                    <select
-                        value={filterGender}
-                        onChange={(e) => setFilterGender(e.target.value as GenderFilter)}
-                        className="w-full appearance-none pl-3 pr-10 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    >
-                        <option value="All">Todos los Géneros</option>
-                        <option value="Masculino">Masculino</option>
-                        <option value="Femenino">Femenino</option>
-                    </select>
-                    <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                        <svg className="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" /></svg>
-                    </div>
-                </div>
-            </div>
-            
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 pt-4 border-t border-gray-200 dark:border-gray-700">
+            {/* Action Buttons */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                 <button onClick={() => setIsCensusModalOpen(true)} className="flex items-center justify-center gap-2 bg-purple-600 text-white font-semibold py-2 px-4 rounded-md hover:bg-purple-700 transition-colors">
                     <span>Censo</span>
                 </button>
@@ -532,6 +458,107 @@ const Dashboard: React.FC<{ user: User }> = ({ user }) => {
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clipRule="evenodd" /></svg>
                     <span>PDF</span>
                 </button>
+            </div>
+
+             {/* Collapsible Filters */}
+            <div>
+              <button
+                onClick={() => setAreFiltersVisible(!areFiltersVisible)}
+                className="w-full flex justify-between items-center text-left p-3 mt-4 bg-gray-50 dark:bg-gray-700/50 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                aria-expanded={areFiltersVisible}
+                aria-controls="filter-section"
+              >
+                <div className="flex items-center space-x-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-500 dark:text-gray-400" viewBox="0 0 20 20" fill="currentColor">
+                      <path d="M5 4a1 1 0 00-2 0v7.268a2 2 0 000 3.464V16a1 1 0 102 0v-1.268a2 2 0 000-3.464V4zM11 4a1 1 0 10-2 0v1.268a2 2 0 000 3.464V16a1 1 0 102 0V8.732a2 2 0 000-3.464V4zM16 3a1 1 0 011 1v7.268a2 2 0 010 3.464V16a1 1 0 11-2 0v-1.268a2 2 0 010-3.464V4a1 1 0 011-1z" />
+                    </svg>
+                    <span className="font-semibold text-gray-700 dark:text-gray-200">Filtros y Búsqueda</span>
+                </div>
+                <svg className={`h-5 w-5 text-gray-500 dark:text-gray-400 transition-transform transform ${areFiltersVisible ? 'rotate-180' : ''}`} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                    <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
+                </svg>
+              </button>
+              
+              <div id="filter-section" className={`transition-all duration-300 ease-in-out overflow-hidden ${areFiltersVisible ? 'max-h-96' : 'max-h-0'}`}>
+                <div className="space-y-4 pt-4">
+                  <div className="relative">
+                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                          <svg className="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                              <path fillRule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clipRule="evenodd" />
+                          </svg>
+                      </div>
+                      <input
+                          type="text"
+                          placeholder="Buscar por nombre..."
+                          value={searchTerm}
+                          onChange={handleSearchChange}
+                          onFocus={() => setShowSuggestions(true)}
+                          onBlur={() => setTimeout(() => setShowSuggestions(false), 150)}
+                          className="w-full pl-10 pr-3 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          autoComplete="off"
+                      />
+                      {showSuggestions && suggestions.length > 0 && searchTerm && (
+                          <ul className="absolute z-10 w-full mt-1 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-lg max-h-60 overflow-y-auto">
+                              {suggestions.map(suggestion => (
+                                  <li 
+                                      key={suggestion.id}
+                                      className="px-4 py-2 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-600 text-gray-900 dark:text-gray-200"
+                                      onMouseDown={() => handleSuggestionClick(suggestion.nombre_completo)}
+                                  >
+                                      {suggestion.nombre_completo}
+                                  </li>
+                              ))}
+                          </ul>
+                      )}
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      <div className="relative">
+                          <select
+                              value={filterStatus}
+                              onChange={(e) => setFilterStatus(e.target.value as StatusFilter)}
+                              className="w-full appearance-none pl-3 pr-10 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          >
+                              <option value="all">Todos los Registros</option>
+                              <option value="general">Censo General (Activos/RT)</option>
+                              <option value="archivado">Archivados</option>
+                              <option value="trasladado">Trasladados</option>
+                          </select>
+                          <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                              <svg className="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" /></svg>
+                          </div>
+                      </div>
+                      <div className="relative">
+                          <select
+                              value={filterGroup}
+                              onChange={(e) => setFilterGroup(e.target.value)}
+                              className="w-full appearance-none pl-3 pr-10 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          >
+                              <option value="All">Todos los Grupos</option>
+                              {Object.entries(GROUP_DEFINITIONS).map(([key, label]) => (
+                                  <option key={key} value={key}>{label}</option>
+                              ))}
+                          </select>
+                          <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                              <svg className="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" /></svg>
+                          </div>
+                      </div>
+                       <div className="relative">
+                          <select
+                              value={filterGender}
+                              onChange={(e) => setFilterGender(e.target.value as GenderFilter)}
+                              className="w-full appearance-none pl-3 pr-10 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          >
+                              <option value="All">Todos los Géneros</option>
+                              <option value="Masculino">Masculino</option>
+                              <option value="Femenino">Femenino</option>
+                          </select>
+                          <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                              <svg className="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" /></svg>
+                          </div>
+                      </div>
+                  </div>
+                </div>
+              </div>
             </div>
         </div>
 

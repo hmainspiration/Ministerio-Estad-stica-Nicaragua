@@ -1,0 +1,9 @@
+[{
+  "relation": ["delegate_permission/common.handle_all_urls"],
+  "target": {
+    "namespace": "android_app",
+    "package_name": "app.vercel.ministerio_estadistica_nicaragua",
+    "sha256_cert_fingerprints":
+    ["0E:6A:98:05:94:FE:3D:FC:F5:62:7A:7E:5F:7E:88:5E:E4:CA:DD:23:DA:88:40:9A:5B:8C:14:96:A9:7A:AB:85"]
+  }
+}]
