@@ -18,7 +18,6 @@ const MemberFormModal: React.FC<MemberFormModalProps> = ({ isOpen, onClose, onSu
   const [grupo, setGrupo] = useState<NonNullable<CensusRecord['grupo']>>('C');
   const [estado, setEstado] = useState<CensusRecord['estado']>('Activo');
   
-  // State for separate date fields
   const [day, setDay] = useState('');
   const [month, setMonth] = useState('');
   const [year, setYear] = useState('');
@@ -43,7 +42,6 @@ const MemberFormModal: React.FC<MemberFormModalProps> = ({ isOpen, onClose, onSu
             setDay(''); setMonth(''); setYear('');
         }
       } else {
-        // Reset form for new entry
         setNombreCompleto('');
         setNumeroCedula('');
         setGenero('Masculino');
@@ -94,83 +92,121 @@ const MemberFormModal: React.FC<MemberFormModalProps> = ({ isOpen, onClose, onSu
 
   return (
     <>
-    <div className="fixed inset-0 z-40 flex items-center justify-center bg-black bg-opacity-60" onClick={onClose}>
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-2xl p-6 m-4 max-w-lg w-full max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
-        <h2 className="text-xl font-bold mb-4">{initialData ? 'Editar Miembro' : 'Agregar Nuevo Miembro'}</h2>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label htmlFor="nombre_completo" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Nombre Completo</label>
-            <input type="text" name="nombre_completo" value={nombreCompleto} onChange={(e) => setNombreCompleto(e.target.value)} required className="mt-1 block w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"/>
-          </div>
-          
-          {/* --- START: REDESIGNED DATE INPUT --- */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Fecha de Nacimiento</label>
-            <div className="grid grid-cols-3 gap-2 mt-1">
-              <select name="day" value={day} onChange={(e) => setDay(e.target.value)} className="w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md">
-                <option value="">Día</option>
-                {days.map(d => <option key={d} value={d}>{d}</option>)}
-              </select>
-              <select name="month" value={month} onChange={(e) => setMonth(e.target.value)} className="w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md">
-                 <option value="">Mes</option>
-                 {months.map(m => <option key={m.value} value={m.value}>{m.name}</option>)}
-              </select>
-              <select name="year" value={year} onChange={(e) => setYear(e.target.value)} className="w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md">
-                 <option value="">Año</option>
-                 {years.map(y => <option key={y} value={y}>{y}</option>)}
-              </select>
+    <div className="fixed inset-0 z-40 flex items-center justify-center bg-slate-900/70 backdrop-blur-sm p-4 transition-opacity" onClick={onClose}>
+      <div className="bg-white dark:bg-slate-800 rounded-3xl shadow-2xl w-full max-w-lg overflow-hidden transform transition-all scale-100" onClick={e => e.stopPropagation()}>
+        
+        {/* Modal Header */}
+        <div className="bg-slate-50 dark:bg-slate-900/50 px-8 py-6 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center">
+            <div>
+                <h2 className="text-xl font-bold text-slate-900 dark:text-white">{initialData ? 'Editar Miembro' : 'Nuevo Registro'}</h2>
+                <p className="text-sm text-slate-500 dark:text-slate-400 mt-0.5">Complete la información del censo</p>
             </div>
-          </div>
-          {/* --- END: REDESIGNED DATE INPUT --- */}
+            <button onClick={onClose} className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-2 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-full transition-colors">
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+        </div>
 
-          <div>
-            <label htmlFor="numero_cedula" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Número de Cédula</label>
-            <input type="text" name="numero_cedula" value={numeroCedula} onChange={(e) => setNumeroCedula(e.target.value)} className="mt-1 block w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"/>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {/* Modal Body */}
+        <div className="p-8 max-h-[75vh] overflow-y-auto custom-scrollbar">
+            <form onSubmit={handleSubmit} className="space-y-6">
+            
             <div>
-              <label htmlFor="genero" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Género</label>
-              <select name="genero" value={genero} onChange={(e) => setGenero(e.target.value as any)} className="mt-1 block w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
-                <option>Masculino</option>
-                <option>Femenino</option>
-              </select>
+                <label htmlFor="nombre_completo" className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2 ml-1">Nombre Completo</label>
+                <input type="text" name="nombre_completo" value={nombreCompleto} onChange={(e) => setNombreCompleto(e.target.value)} required className="block w-full px-4 py-3.5 bg-white dark:bg-slate-700/50 border border-slate-200 dark:border-slate-600 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-slate-900 dark:text-white placeholder-slate-400 transition-all"/>
             </div>
+            
             <div>
-              <label htmlFor="grupo" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Grupo</label>
-              <select name="grupo" value={grupo} onChange={(e) => setGrupo(e.target.value as NonNullable<CensusRecord['grupo']>)} className="mt-1 block w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
-                {Object.entries(GROUP_DEFINITIONS).map(([key, label]) => (
-                  <option key={key} value={key}>{label}</option>
-                ))}
-              </select>
+                <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2 ml-1">Fecha de Nacimiento</label>
+                <div className="grid grid-cols-3 gap-3">
+                    <div className="relative">
+                        <select name="day" value={day} onChange={(e) => setDay(e.target.value)} className="block w-full px-3 py-3.5 bg-white dark:bg-slate-700/50 border border-slate-200 dark:border-slate-600 rounded-xl appearance-none focus:ring-2 focus:ring-indigo-500 focus:outline-none text-slate-900 dark:text-white transition-all">
+                            <option value="">Día</option>
+                            {days.map(d => <option key={d} value={d}>{d}</option>)}
+                        </select>
+                        <div className="absolute right-2 top-4 pointer-events-none text-slate-500"><svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg></div>
+                    </div>
+                    <div className="relative">
+                        <select name="month" value={month} onChange={(e) => setMonth(e.target.value)} className="block w-full px-3 py-3.5 bg-white dark:bg-slate-700/50 border border-slate-200 dark:border-slate-600 rounded-xl appearance-none focus:ring-2 focus:ring-indigo-500 focus:outline-none text-slate-900 dark:text-white transition-all">
+                            <option value="">Mes</option>
+                            {months.map(m => <option key={m.value} value={m.value}>{m.name}</option>)}
+                        </select>
+                        <div className="absolute right-2 top-4 pointer-events-none text-slate-500"><svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg></div>
+                    </div>
+                    <div className="relative">
+                        <select name="year" value={year} onChange={(e) => setYear(e.target.value)} className="block w-full px-3 py-3.5 bg-white dark:bg-slate-700/50 border border-slate-200 dark:border-slate-600 rounded-xl appearance-none focus:ring-2 focus:ring-indigo-500 focus:outline-none text-slate-900 dark:text-white transition-all">
+                            <option value="">Año</option>
+                            {years.map(y => <option key={y} value={y}>{y}</option>)}
+                        </select>
+                        <div className="absolute right-2 top-4 pointer-events-none text-slate-500"><svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg></div>
+                    </div>
+                </div>
             </div>
-          </div>
-           <div>
-              <label htmlFor="estado" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Estado</label>
-              <select name="estado" value={estado} onChange={(e) => setEstado(e.target.value as any)} className="mt-1 block w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
-                <option value="Activo">Activo</option>
-                <option value="Retirado Temporal">Retirado Temporal</option>
-                <option value="Archivado">Archivado</option>
-                <option value="Trasladado">Trasladado</option>
-              </select>
-            </div>
-          <div className="flex justify-between items-center pt-4">
+
             <div>
-                {initialData && onDelete && (
+                <label htmlFor="numero_cedula" className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2 ml-1">Número de Cédula</label>
+                <input type="text" name="numero_cedula" value={numeroCedula} onChange={(e) => setNumeroCedula(e.target.value)} className="block w-full px-4 py-3.5 bg-white dark:bg-slate-700/50 border border-slate-200 dark:border-slate-600 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-slate-900 dark:text-white placeholder-slate-400 transition-all" placeholder="000-000000-0000A"/>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                <label htmlFor="genero" className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2 ml-1">Género</label>
+                <div className="relative">
+                    <select name="genero" value={genero} onChange={(e) => setGenero(e.target.value as any)} className="block w-full px-4 py-3.5 bg-white dark:bg-slate-700/50 border border-slate-200 dark:border-slate-600 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 appearance-none text-slate-900 dark:text-white transition-all">
+                        <option>Masculino</option>
+                        <option>Femenino</option>
+                    </select>
+                    <div className="absolute right-3 top-4 pointer-events-none text-slate-500"><svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg></div>
+                </div>
+                </div>
+                <div>
+                <label htmlFor="grupo" className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2 ml-1">Grupo</label>
+                <div className="relative">
+                    <select name="grupo" value={grupo} onChange={(e) => setGrupo(e.target.value as NonNullable<CensusRecord['grupo']>)} className="block w-full px-4 py-3.5 bg-white dark:bg-slate-700/50 border border-slate-200 dark:border-slate-600 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 appearance-none text-slate-900 dark:text-white transition-all">
+                        {Object.entries(GROUP_DEFINITIONS).map(([key, label]) => (
+                        <option key={key} value={key}>{label}</option>
+                        ))}
+                    </select>
+                    <div className="absolute right-3 top-4 pointer-events-none text-slate-500"><svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg></div>
+                </div>
+                </div>
+            </div>
+
+            <div>
+                <label htmlFor="estado" className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2 ml-1">Estado</label>
+                <div className="relative">
+                    <select name="estado" value={estado} onChange={(e) => setEstado(e.target.value as any)} className="block w-full px-4 py-3.5 bg-white dark:bg-slate-700/50 border border-slate-200 dark:border-slate-600 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 appearance-none text-slate-900 dark:text-white transition-all">
+                        <option value="Activo">Activo</option>
+                        <option value="Retirado Temporal">Retirado Temporal</option>
+                        <option value="Archivado">Archivado</option>
+                        <option value="Trasladado">Trasladado</option>
+                    </select>
+                    <div className="absolute right-3 top-4 pointer-events-none text-slate-500"><svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg></div>
+                </div>
+            </div>
+
+            {/* Footer */}
+            <div className="flex flex-col-reverse sm:flex-row justify-between items-center pt-8 mt-2 border-t border-slate-100 dark:border-slate-700 gap-4">
+                {initialData && onDelete ? (
                     <button 
                         type="button" 
                         onClick={() => setConfirmDeleteOpen(true)}
-                        className="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-red-500"
+                        className="w-full sm:w-auto px-4 py-3 text-sm font-bold text-red-600 bg-red-50 hover:bg-red-100 dark:bg-red-900/20 dark:text-red-400 dark:hover:bg-red-900/30 rounded-xl transition-colors"
                     >
-                        Eliminar
+                        Eliminar Miembro
                     </button>
-                )}
+                ) : <div className="hidden sm:block"></div>}
+                
+                <div className="flex w-full sm:w-auto space-x-3">
+                    <button type="button" onClick={onClose} className="flex-1 sm:flex-none px-6 py-3 text-sm font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:text-slate-200 dark:hover:bg-slate-600 rounded-xl transition-colors">
+                        Cancelar
+                    </button>
+                    <button type="submit" className="flex-1 sm:flex-none px-8 py-3 text-sm font-bold text-white bg-indigo-600 hover:bg-indigo-700 rounded-xl shadow-lg shadow-indigo-500/30 hover:shadow-indigo-500/50 transition-all active:scale-95">
+                        Guardar
+                    </button>
+                </div>
             </div>
-            <div className="space-x-3">
-                <button type="button" onClick={onClose} className="px-4 py-2 text-sm font-medium bg-gray-200 dark:bg-gray-600 rounded-md hover:bg-gray-300 dark:hover:bg-gray-500">Cancelar</button>
-                <button type="submit" className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">Guardar</button>
-            </div>
-          </div>
-        </form>
+            </form>
+        </div>
       </div>
     </div>
     <ConfirmationModal
@@ -181,10 +217,10 @@ const MemberFormModal: React.FC<MemberFormModalProps> = ({ isOpen, onClose, onSu
                 onDelete(initialData.id);
             }
             setConfirmDeleteOpen(false);
-            onClose(); // Close the edit form as well
+            onClose(); 
         }}
-        title="Confirmar Eliminación"
-        message="¿Estás seguro de que quieres eliminar este miembro? Esta acción es permanente."
+        title="Eliminar Miembro"
+        message="¿Estás seguro de que quieres eliminar este registro permanentemente? Esta acción no se puede deshacer."
       />
     </>
   );

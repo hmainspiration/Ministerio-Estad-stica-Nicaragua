@@ -34,57 +34,70 @@ const LoginPage: React.FC = () => {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100 dark:bg-gray-900">
-      <div className="w-full max-w-md p-8 space-y-8 bg-white dark:bg-gray-800 rounded-lg shadow-lg">
-        <div className="text-center">
-          <h2 className="text-xl font-bold text-gray-900 dark:text-white uppercase tracking-wider">
-            Ministerio de Estadística Nicaragua
+    <div className="flex items-center justify-center min-h-screen bg-slate-50 dark:bg-slate-950 p-4 relative overflow-hidden">
+      {/* Decorative Background Elements */}
+      <div className="absolute top-[-10%] left-[-10%] w-96 h-96 bg-indigo-400/20 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-blob"></div>
+      <div className="absolute bottom-[-10%] right-[-10%] w-96 h-96 bg-blue-400/20 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-blob animation-delay-2000"></div>
+
+      <div className="w-full max-w-md bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-800 overflow-hidden transition-all duration-500 relative z-10">
+        
+        {/* Header Section */}
+        <div className="px-8 pt-10 pb-6 text-center">
+          <div className="mx-auto h-16 w-16 bg-gradient-to-tr from-indigo-600 to-blue-500 rounded-2xl flex items-center justify-center shadow-lg shadow-indigo-500/30 mb-6 text-white transform rotate-3 hover:rotate-0 transition-transform duration-300">
+             <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+             </svg>
+          </div>
+          <h2 className="text-2xl font-bold text-slate-900 dark:text-white tracking-tight">
+            Ministerio de Estadística
           </h2>
-          <p className="mt-2 text-lg text-gray-600 dark:text-gray-300">
-            La Luz del Mundo
+          <p className="mt-2 text-sm font-medium text-slate-500 dark:text-slate-400">
+            Gestión de Membresía • Nicaragua
           </p>
         </div>
-        <form className="space-y-6" onSubmit={handleSubmit}>
-          <div className="rounded-md shadow-sm -space-y-px">
+
+        {/* Form Section */}
+        <form className="px-8 pb-10 space-y-5" onSubmit={handleSubmit}>
+          <div className="space-y-4">
             {!isLogin && (
-              <div>
-                <label htmlFor="church-name" className="sr-only">Nombre de la Iglesia</label>
+              <div className="group">
+                <label htmlFor="church-name" className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1 ml-1">Iglesia</label>
                 <input
                   id="church-name"
                   name="church-name"
                   type="text"
                   required
-                  className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 placeholder-gray-500 text-gray-900 dark:text-white dark:bg-gray-700 rounded-t-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
-                  placeholder="Nombre de la Iglesia"
+                  className="block w-full px-4 py-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 transition-all duration-200"
+                  placeholder="Ej. Iglesia Central"
                   value={churchName}
                   onChange={(e) => setChurchName(e.target.value)}
                 />
               </div>
             )}
-            <div>
-              <label htmlFor="email-address" className="sr-only">Correo Electrónico</label>
+            <div className="group">
+              <label htmlFor="email-address" className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1 ml-1">Correo</label>
               <input
                 id="email-address"
                 name="email"
                 type="email"
                 autoComplete="email"
                 required
-                className={`appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 placeholder-gray-500 text-gray-900 dark:text-white dark:bg-gray-700 ${isLogin ? 'rounded-t-md' : ''} focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm`}
-                placeholder="Correo Electrónico"
+                className="block w-full px-4 py-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 transition-all duration-200"
+                placeholder="correo@ejemplo.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
             </div>
-            <div>
-              <label htmlFor="password" className="sr-only">Contraseña</label>
+            <div className="group">
+              <label htmlFor="password" className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1 ml-1">Contraseña</label>
               <input
                 id="password"
                 name="password"
                 type="password"
                 autoComplete="current-password"
                 required
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 placeholder-gray-500 text-gray-900 dark:text-white dark:bg-gray-700 rounded-b-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
-                placeholder="Contraseña"
+                className="block w-full px-4 py-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 transition-all duration-200"
+                placeholder="••••••••"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
@@ -92,30 +105,38 @@ const LoginPage: React.FC = () => {
           </div>
           
           {!isLogin && (
-             <p className="text-xs text-gray-500 dark:text-gray-400 px-1">
+             <p className="text-xs text-slate-500 dark:text-slate-400 text-center bg-slate-50 dark:bg-slate-800/50 py-2 rounded-lg">
                 La contraseña debe tener al menos 6 caracteres.
              </p>
           )}
 
-          {error && <p className="text-sm text-red-500 text-center">{error}</p>}
+          {error && (
+            <div className="p-3 rounded-xl bg-red-50 dark:bg-red-900/20 border border-red-100 dark:border-red-800/50 text-sm text-red-600 dark:text-red-300 text-center font-medium animate-pulse">
+              {error}
+            </div>
+          )}
 
-          <div>
-            <button
-              type="submit"
-              disabled={loading}
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:bg-blue-300"
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full flex justify-center items-center py-4 px-4 border border-transparent text-sm font-bold rounded-xl text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-4 focus:ring-indigo-500/20 disabled:bg-indigo-400 disabled:cursor-not-allowed transition-all duration-200 shadow-lg shadow-indigo-500/30 hover:shadow-indigo-500/50 active:scale-[0.98]"
+          >
+            {loading ? <Spinner size="h-5 w-5" /> : (isLogin ? 'Acceder' : 'Registrarse')}
+          </button>
+
+          <div className="text-center pt-2">
+            <button 
+              type="button"
+              onClick={() => { setIsLogin(!isLogin); setError(null); }} 
+              className="text-sm font-semibold text-slate-600 hover:text-indigo-600 dark:text-slate-400 dark:hover:text-indigo-400 transition-colors"
             >
-              {loading ? <Spinner size="h-5 w-5" /> : (isLogin ? 'Iniciar Sesión' : 'Registrarse')}
+              {isLogin ? '¿No tienes cuenta? Crear una' : '¿Ya tienes cuenta? Iniciar sesión'}
             </button>
           </div>
         </form>
-        <div className="text-sm text-center">
-          <button onClick={() => { setIsLogin(!isLogin); setError(null); }} className="font-medium text-blue-600 hover:text-blue-500">
-            {isLogin ? '¿No tienes cuenta? Regístrate' : '¿Ya tienes cuenta? Inicia sesión'}
-          </button>
-        </div>
-        <div className="text-center">
-           <p className="text-xs text-gray-500 dark:text-gray-400">Versión 1.2</p>
+        
+        <div className="bg-slate-50/80 dark:bg-slate-900/50 py-3 text-center border-t border-slate-100 dark:border-slate-800">
+           <p className="text-[10px] font-bold text-slate-400 dark:text-slate-600 uppercase tracking-widest">Versión 1.2</p>
         </div>
       </div>
     </div>
